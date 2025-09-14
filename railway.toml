@@ -1,0 +1,29 @@
+# Railway Deployment Configuration
+# This file is used by Railway for deployment
+
+# Build configuration
+[build]
+builder = "nixpacks"
+
+# Environment variables (set these in Railway dashboard)
+# SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mottamaadi_cafe
+# SPRING_DATASOURCE_USERNAME=root
+# SPRING_DATASOURCE_PASSWORD=password
+# TWILIO_ACCOUNT_SID=your_twilio_sid
+# TWILIO_AUTH_TOKEN=your_twilio_token
+# TWILIO_PHONE_NUMBER=your_twilio_number
+# ADMIN_PHONE_NUMBER=your_admin_number
+# RAZORPAY_KEY_ID=your_razorpay_key_id
+# RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+# STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+# STRIPE_SECRET_KEY=your_stripe_secret_key
+# FIREBASE_PROJECT_ID=your_firebase_project_id
+# FIREBASE_SERVICE_ACCOUNT_KEY=path/to/service-account-key.json
+
+# Port configuration
+[deploy]
+startCommand = "java -jar target/food-ordering-0.0.1-SNAPSHOT.jar"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

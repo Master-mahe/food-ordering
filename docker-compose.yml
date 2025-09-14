@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: mottamaadi-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mottamaadi_cafe
+      MYSQL_USER: cafe_user
+      MYSQL_PASSWORD: cafe_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - cafe-network
+
+  # Spring Boot Application
+  app:
+    build: .
+    container_name: mottamaadi-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mottamaadi_cafe?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: cafe_user
+      SPRING_DATASOURCE_PASSWORD: cafe_password
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER}
+      ADMIN_PHONE_NUMBER: ${ADMIN_PHONE_NUMBER}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY}
+    ports:
+      - "9090:9090"
+    depends_on:
+      - mysql
+    networks:
+      - cafe-network
+    volumes:
+      - ./firebase-service-account-key.json:/app/firebase-service-account-key.json
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: mottamaadi-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cafe-network
+
+volumes:
+  mysql_data:
+
+networks:
+  cafe-network:
+    driver: bridge
